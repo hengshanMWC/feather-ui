@@ -1,0 +1,1 @@
+export const NAME = 'feather_ui'
