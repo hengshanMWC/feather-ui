@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --config build/webpack.dev.config.js",
-    "build": "webpack --env.prod --config build/webpack.config.js"
+    "build": "webpack --env.prod --config build/webpack.dev.config.js"
   },
   "dependencies": {
     "@posva/vue-router-next": "^4.0.0-alpha.0",
