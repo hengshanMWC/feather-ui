@@ -1,14 +1,14 @@
 const path = require('path')
 const { VueLoaderPlugin } = require('vue-loader')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { resolve } = require('./utils')
 module.exports = (env = {}) => ({
   mode: env.prod ? 'production' : 'development',
   devtool: env.prod ? 'source-map' : 'cheap-module-eval-source-map',
-  entry: path.resolve(__dirname, './src/main.ts'),
+  entry: resolve('src/main.ts'),
   output: {
-    path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/'
+    path: resolve('dist')
   },
   resolve: {
     alias: {
@@ -43,21 +43,33 @@ module.exports = (env = {}) => ({
         }
       },
       {
-        test: /\.css$/,
+        test: /\.s?css$/,
         use: [
+          'vue-style-loader',
+          'css-loader',
+          'postcss-loader',
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: { hmr: !env.prod }
-          },
-          'css-loader'
+            loader: 'sass-loader',
+            options: {
+              implementation: require('dart-sass')
+            }
+          }
+          // {
+          //   loader: 'sass-resources-loader',
+          //   options: {
+          //     resources: resolve('src/style/index.scss')
+          //   }
+          // }
         ]
       }
     ]
   },
   plugins: [
     new VueLoaderPlugin(),
-    new MiniCssExtractPlugin({
-      filename: '[name].css'
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: resolve('index.html'),
+      inject: true
     })
   ],
   devServer: {

@@ -23,7 +23,7 @@ export default defineComponent({
       default: 0,
     },
   },
-  setup (props, context) {
+  setup (props) {
     // 缓存
     const key = computed(() => `${NAME}_timing_${props.cacheID}`)
     function getCache (): number {

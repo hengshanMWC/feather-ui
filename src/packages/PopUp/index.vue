@@ -1,7 +1,7 @@
 <template>
   <div class="pop-up">
     <transition name="fade">
-      <div class="night" v-show="show" @click="$emit('hide', false)" @touchmove.prevent></div>
+      <div class="night" v-show="show" @click="handleHide" @touchmove.prevent></div>
     </transition>
     <transition :name="position">
       <div ref="pop" v-show="show" :class="position" class="slot-container">
@@ -12,26 +12,27 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-export default {
+import { defineComponent, toRefs } from 'vue'
+export default defineComponent({
   name: 'popUp',
-  data () {
-    return {
-      onceActivated: true
-    }
-  },
   props: {
     show: Boolean,
     position: {
       type: String,
-      default: 'center' // bottom
+      default: 'center' // center, top, right, bottom, left
     }
   },
-  model: {
-    prop: 'show',
-    event: 'hide'
+  setup (props, { emit }) {
+    function handleHide () {
+      emit('update:show', false)
+      emit('hide', false)
+    }
+    return {
+      handleHide,
+      ...toRefs(props)
+    }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>
@@ -68,6 +69,7 @@ export default {
     left: 0;
   }
   .right {
+    top: 0;
     right: 0
   }
   .bottom {
@@ -75,6 +77,7 @@ export default {
     left: 0;
   }
   .left {
+    top: 0;
     left: 0;
   }
 }

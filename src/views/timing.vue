@@ -10,7 +10,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import timing from './packages/timing/index.vue'
-import { wait } from '../utils/common'
+import { wait } from '@/utils/common'
 export default defineComponent ({
   components: {timing},
   setup (props, content) {
