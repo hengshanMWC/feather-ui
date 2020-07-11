@@ -1,11 +1,11 @@
 <template>
   <div class="timing">
-    <slot :time="time"></slot>
+    <slot :time="timeRef"></slot>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, toRefs, computed, onUnmounted } from 'vue'
-import { NAME } from '@/constant'
+import { useCache } from './use'
 export default defineComponent({
   name: 'timing',
   props: {
@@ -24,25 +24,21 @@ export default defineComponent({
     },
   },
   setup (props) {
-    // 缓存
-    const key = computed(() => `${NAME}_timing_${props.cacheID}`)
-    function getCache (): number {
-      const time = Number(props.cacheObject.getItem(key.value)) - Date.now()
-      return time > 0 ? time / 1000 : 0
-    }
-    function setCache (seconds: number) {
-      const time = seconds * 1000 + Date.now()
-      props.cacheObject.setItem(key.value, time.toString())
-    }
+    const {
+      getCache,
+      setCache,
+      removeCache
+    } = useCache(props.cacheID, props.cacheObject)
     // 定时器
-    const time = ref(0)
+    const timeRef = ref(0)
     let timer: NodeJS.Timeout
     function startTime () {
       timer = setTimeout(() => {
-        if (time.value <= 0) {
+        if (timeRef.value <= 0) {
+          removeCache()
           clearTimeout(timer)
         } else {
-          setCache(--time.value)
+          setCache(--timeRef.value)
           startTime()
         }
       }, 1000)
@@ -53,33 +49,32 @@ export default defineComponent({
     // 启动
     const loading = ref<Boolean>(false)
     async function start (cd: Function): Promise<undefined | number> {
-      if (time.value === 0 && !loading.value) {
+      if (timeRef.value === 0 && !loading.value) {
         loading.value = true
         const b: boolean = await cd()
         if (b) {
-          time.value = props.seconds
-          setCache(time.value)
+          timeRef.value = props.seconds
+          setCache(timeRef.value)
           startTime()
         }
         loading.value = false
       } else {
-        return time.value
+        return timeRef.value
       }
     }
     // 初始化
-    (function cacheExtract () {
+    (function () {
       if (props.isCache) {
-        time.value = Math.round(getCache())
+        timeRef.value = Math.round(getCache())
         startTime()
       }
-      props.cacheObject.removeItem(key.value)
+      removeCache()
     })()
     return {
       start,
       startTime,
-      time
+      timeRef
     }
-    
   }
 })
 </script>

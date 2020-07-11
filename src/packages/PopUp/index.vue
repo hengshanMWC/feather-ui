@@ -1,84 +1,83 @@
 <template>
-  <div class="pop-up">
-    <transition name="fade">
-      <div class="night" v-show="show" @click="handleHide" @touchmove.prevent></div>
-    </transition>
-    <transition :name="position">
-      <div ref="pop" v-show="show" :class="position" class="slot-container">
-        <slot></slot>
+  <div>
+    <button @click="centerShow = true">center弹窗</button>
+    <button @click="topShow = true">top弹窗</button>
+    <button @click="rightShow = true">right弹窗</button>
+    <button @click="bottomShow = true">bottom弹窗</button>
+    <button @click="leftShow = true">left弹窗</button>
+    <popUp v-model:show="centerShow" position="center">
+      <div class="pop-center">
+        center
       </div>
-    </transition>
+    </popUp>
+    <popUp v-model:show="topShow" position="top">
+      <div class="pop-top">
+        top
+      </div>
+    </popUp>
+    <popUp v-model:show="rightShow" position="right">
+      <div class="pop-right">
+        right
+      </div>
+    </popUp>
+    <popUp v-model:show="bottomShow" position="bottom">
+      <div class="pop-bottom">
+        bottom
+      </div>
+    </popUp>
+    <popUp v-model:show="leftShow" position="left">
+      <div class="pop-left">
+        left
+      </div>
+    </popUp>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs } from 'vue'
-export default defineComponent({
-  name: 'popUp',
-  props: {
-    show: Boolean,
-    position: {
-      type: String,
-      default: 'center' // center, top, right, bottom, left
-    }
-  },
-  setup (props, { emit }) {
-    function handleHide () {
-      emit('update:show', false)
-      emit('hide', false)
-    }
+import { defineComponent, ref } from 'vue'
+import PopUp from './packages/PopUp/index.vue'
+export default defineComponent ({
+  components: {PopUp},
+  setup (props, content) {
+    const centerShow = ref<boolean>(false)
+    const topShow = ref<boolean>(false)
+    const rightShow = ref<boolean>(false)
+    const bottomShow = ref<boolean>(false)
+    const leftShow = ref<boolean>(false)
     return {
-      handleHide,
-      ...toRefs(props)
+      centerShow,
+      topShow,
+      rightShow,
+      bottomShow,
+      leftShow
     }
   }
 })
 </script>
 
-<style lang="scss" scoped>
-@import 'move';
-.location-0 {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+<style scoped>
+button {
+  padding: 5px 20px;
 }
-.layer {
-  position: fixed;
-  z-index: 100;
+[class*='pop'] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  font-size: 50px;
 }
-.pop-up {
-  position: absolute;
-  top: 0;
-  .night {
-    @extend .layer;
-    @extend .location-0;
-    background-color: rgba(0,0,0,.8);
-  }
-  .slot-container {
-    @extend .layer;
-  }
-  .center {
-    transform: translate(-50%, -50%);
-    top: 50%;
-    left: 50%;
-    transform-origin: 0 0;
-  }
-  .top {
-    top: 0;
-    left: 0;
-  }
-  .right {
-    top: 0;
-    right: 0
-  }
-  .bottom {
-    bottom: 0;
-    left: 0;
-  }
-  .left {
-    top: 0;
-    left: 0;
-  }
+.pop-center {
+  width: 90vw;
+  height: 200px;
+}
+.pop-bottom,
+.pop-top {
+  height: 400px;
+  width: 100vw;
+}
+.pop-left,
+.pop-right {
+  width: 80vw;
+  height: 100vh;
 }
 </style>

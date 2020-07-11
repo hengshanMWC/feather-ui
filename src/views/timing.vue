@@ -1,7 +1,7 @@
 <template>
   <div>
     <input type="tel" placeholder="请输入手机号" v-model="phone" maxlength="11">
-    <timing ref="timingRef" v-slot="slotProps" :seconds="10" @loading="handleLoading">
+    <timing ref="timingRef" v-slot="slotProps" :seconds="10" @loading="handleLoading" :is-cache="10" :cacheObject="sessionStorage">
       <button @click="handleVerify">{{slotProps.time ? slotProps.time : '获取验证码'}}</button>
     </timing>
   </div>
@@ -18,7 +18,7 @@ export default defineComponent ({
     const phone = ref<string>('')
     function handleVerify () {
       if (phone.value.length === 11) {
-        timingRef.value.handleClick(() => getYZM())
+        timingRef.value.start(() => getYZM())
       } else {
         alert('请输入正确的手机号码')
       }
@@ -36,7 +36,8 @@ export default defineComponent ({
       getYZM,
       handleLoading,
       timingRef,
-      phone
+      phone,
+      sessionStorage
     }
   }
 })

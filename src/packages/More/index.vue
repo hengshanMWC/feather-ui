@@ -1,6 +1,6 @@
 <template>
   <div class="more">
-    <div class="more-box" ref="moreBoxRef" :class="{'more-true': isMoreRef, 'more-false': !isMoreRef}" :style="{maxHeight: isMoreRef ? maxHeightRef : packHeight}">
+    <div class="more-box" ref="moreBoxRef" :class="{'more-true': isMoreRef, 'more-false': isRef && !isMoreRef}" :style="{maxHeight: isMoreRef ? maxHeightRef : packHeight}">
       <div ref="contentRef">
         <slot name="content"></slot>
       </div>

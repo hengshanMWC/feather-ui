@@ -1,83 +1,53 @@
 <template>
   <div>
-    <button @click="centerShow = true">center弹窗</button>
-    <button @click="topShow = true">top弹窗</button>
-    <button @click="rightShow = true">right弹窗</button>
-    <button @click="bottomShow = true">bottom弹窗</button>
-    <button @click="leftShow = true">left弹窗</button>
-    <popUp v-model:show="centerShow" position="center">
-      <div class="pop-center">
-        center
-      </div>
-    </popUp>
-    <popUp v-model:show="topShow" position="top">
-      <div class="pop-top">
-        top
-      </div>
-    </popUp>
-    <popUp v-model:show="rightShow" position="right">
-      <div class="pop-right">
-        right
-      </div>
-    </popUp>
-    <popUp v-model:show="bottomShow" position="bottom">
-      <div class="pop-bottom">
-        bottom
-      </div>
-    </popUp>
-    <popUp v-model:show="leftShow" position="left">
-      <div class="pop-left">
-        left
-      </div>
-    </popUp>
+    <input type="tel" placeholder="请输入手机号" v-model="phone" maxlength="11">
+    <timing ref="timingRef" v-slot="slotProps" :seconds="10" @loading="handleLoading" :is-cache="10" :cacheObject="sessionStorage">
+      <button @click="handleVerify">{{slotProps.time ? slotProps.time : '获取验证码'}}</button>
+    </timing>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import PopUp from './packages/PopUp/index.vue'
+import timing from './packages/timing/index.vue'
+import { wait } from '@/utils/common'
 export default defineComponent ({
-  components: {PopUp},
+  components: {timing},
   setup (props, content) {
-    const centerShow = ref<boolean>(false)
-    const topShow = ref<boolean>(false)
-    const rightShow = ref<boolean>(false)
-    const bottomShow = ref<boolean>(false)
-    const leftShow = ref<boolean>(false)
+    const timingRef = ref<any>(null)
+    const phone = ref<string>('')
+    function handleVerify () {
+      if (phone.value.length === 11) {
+        timingRef.value.start(() => getYZM())
+      } else {
+        alert('请输入正确的手机号码')
+      }
+    }
+    async function getYZM () {
+      await wait(1000)
+      alert('发送成功')
+      return true
+    }
+    function handleLoading (time: string) {
+      console.log('loading' + time)
+    }
     return {
-      centerShow,
-      topShow,
-      rightShow,
-      bottomShow,
-      leftShow
+      handleVerify,
+      getYZM,
+      handleLoading,
+      timingRef,
+      phone,
+      sessionStorage
     }
   }
 })
 </script>
 
 <style scoped>
-button {
-  padding: 5px 20px;
+img {
+  width: 200px;
 }
-[class*='pop'] {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #fff;
-  font-size: 50px;
-}
-.pop-center {
-  width: 90vw;
-  height: 200px;
-}
-.pop-bottom,
-.pop-top {
-  height: 400px;
-  width: 100vw;
-}
-.pop-left,
-.pop-right {
-  width: 80vw;
-  height: 100vh;
+h1 {
+  font-family: Arial, Helvetica, sans-serif;
 }
 </style>
